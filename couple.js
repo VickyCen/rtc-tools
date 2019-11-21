@@ -90,7 +90,6 @@ function couple(pc, targetId, signaller, opts) {
   var renegotiateRequired = false;
   var creatingOffer = false;
   var awaitingAnswer = false;
-  var interoperating = false;
 
   /**
     Indicates whether this peer connection is in a state where it is able to have new offers created
@@ -136,9 +135,11 @@ function couple(pc, targetId, signaller, opts) {
       // Chrome and Firefox created offers by default client offers are disabled to ensure that all offers are coming
       // from the same source. By passing `allowReactiveInterop` you can reallow this, then use the `filtersdp` option
       // to provide a munged SDP that might be able to work
+      
       return signaller.to(targetId).send('/negotiate', {
-        requestOfferer: (allowReactiveInterop || !interoperating) && renegotiateRequired
+        requestOfferer: renegotiateRequired
       });
+      
     }
 
     debug('[' + signaller.id + '] Creating new offer for ' + targetId);
@@ -231,7 +232,6 @@ function couple(pc, targetId, signaller, opts) {
     debug('[' + signaller.id + '] ' + targetId + ' is ready for coupling');
     targetReady = true;
     targetInfo = src.data;
-    interoperating = (targetInfo.browser !== signaller.attributes.browser);
     emit('target.ready');
   }
 
