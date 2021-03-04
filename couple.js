@@ -95,10 +95,13 @@ function couple(pc, targetId, signaller, opts) {
     Indicates whether this peer connection is in a state where it is able to have new offers created
    **/
   function isReadyForOffer() {
+    console.log("====coupling", coupling);
+    console.log("====pc.signalingState", pc.signalingState);
     return !coupling && pc.signalingState === 'stable';
   }
 
   function createOffer() {
+    console.log("====createOffer");
     // If coupling is already in progress, return
     if (!isReadyForOffer()) return;
 
@@ -135,11 +138,11 @@ function couple(pc, targetId, signaller, opts) {
       // Chrome and Firefox created offers by default client offers are disabled to ensure that all offers are coming
       // from the same source. By passing `allowReactiveInterop` you can reallow this, then use the `filtersdp` option
       // to provide a munged SDP that might be able to work
-      
+
       return signaller.to(targetId).send('/negotiate', {
         requestOfferer: renegotiateRequired
       });
-      
+
     }
 
     debug('[' + signaller.id + '] Creating new offer for ' + targetId);
@@ -315,6 +318,7 @@ function couple(pc, targetId, signaller, opts) {
     This allows the master to request the client to send an offer
    **/
   function requestOfferFromClient() {
+    console.log("======requestOfferFromClient");
     if (requestOfferTimer) clearTimeout(requestOfferTimer);
     if (pc.signalingState === 'closed') return;
 
